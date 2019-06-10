@@ -96,7 +96,7 @@ func keptnHandler(w http.ResponseWriter, r *http.Request) {
 func sendUFORequest(ufoAddress string, ufoRow string, ufoColor string, morph bool, whirl bool) {
 	url := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor
 	urlmorph := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor + "&top_morph=30|10"
-	urlwhirl := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|1|" + ufoColor + "&top_whirl=255"
+	urlwhirl := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|1|" + ufoColor + "&top_whirl=240"
 	var preparedurl string
 	if morph {
 		if whirl {
