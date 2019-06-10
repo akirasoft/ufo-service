@@ -90,8 +90,8 @@ func keptnHandler(w http.ResponseWriter, r *http.Request) {
 // sendUFORequest : creates and issues necessary GET requests to set UFO LEDs
 func sendUFORequest(ufoAddress string, ufoRow string, ufoColor string, morph bool, whirl bool) {
 	url := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor
-	urlmorph := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor + "&top_morph=30|10"
-	urlwhirl := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|1|" + ufoColor + "&top_whirl=240"
+	urlmorph := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor + "&" + ufoRow + "_morph=30|10"
+	urlwhirl := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|1|" + ufoColor + "&" + ufoRow + "_whirl=240"
 	var preparedurl string
 	if morph {
 		if whirl {
