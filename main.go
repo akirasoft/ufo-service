@@ -63,28 +63,23 @@ func keptnHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if event.Type == "sh.keptn.events.new-artefact" {
-		ufoRow := "top"
 		ufoColor := "0000ff"
 		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
 	} else if event.Type == "sh.keptn.events.deployment-finished" {
-		ufoRow := "top"
 		ufoColor := "800080"
 		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
 	} else if event.Type == "sh.keptn.events.tests-finished" {
-		ufoRow := "top"
 		ufoColor := "00ff00"
 		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 		sendUFORequest(ufoAddress, ufoRow, ufoColor, true, false)
 	} else if event.Type == "sh.keptn.events.evaluation-done" {
 		if event.Data.EvaluationPassed {
-			ufoRow := "bottom"
 			ufoColor := "00ff00"
 			infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 			sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
 		} else {
-			ufoRow := "bottom"
 			ufoColor := "ff0000"
 			infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 			sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
