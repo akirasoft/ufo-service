@@ -62,7 +62,7 @@ func keptnHandler(w http.ResponseWriter, r *http.Request) {
 		ufoRow = "bottom"
 	}
 
-	if event.Type == "sh.keptn.events.new-artefact" {
+	if event.Type == "sh.keptn.events.new-artifact" {
 		ufoColor := "0000ff"
 		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
@@ -136,7 +136,7 @@ func main() {
 		errorLog.Println("No UFO address defined")
 		return
 	}
-	ufoInit(ufoAddress)
+	//ufoInit(ufoAddress)
 
 	http.HandleFunc("/", keptnHandler)
 
