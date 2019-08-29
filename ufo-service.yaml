@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: ufo-service
-        image: mvilliger/ufo-service:0.2
+        image: mvilliger/ufo-service:0.3
         ports:
         - containerPort: 8080
         resources:

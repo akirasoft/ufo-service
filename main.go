@@ -1,93 +1,81 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"os"
-)
 
-type keptnEvent struct {
-	Specversion     string `json:"specversion"`
-	Type            string `json:"type"`
-	Source          string `json:"source"`
-	ID              string `json:"id"`
-	Time            string `json:"time"`
-	Datacontenttype string `json:"datacontenttype"`
-	Shkeptncontext  string `json:"shkeptncontext"`
-	Data            struct {
-		Githuborg          string `json:"githuborg"`
-		Project            string `json:"project"`
-		Teststrategy       string `json:"teststrategy"`
-		Deploymentstrategy string `json:"deploymentstrategy"`
-		Stage              string `json:"stage"`
-		Service            string `json:"service"`
-		Image              string `json:"image"`
-		Tag                string `json:"tag"`
-		EvaluationPassed   bool   `json:"evaluationpassed,omitempty"`
-	} `json:"data"`
-}
-
-var (
-	infoLog  *log.Logger
-	errorLog *log.Logger
+	keptnevents "github.com/akirasoft/keptn-events"
+	"github.com/kelseyhightower/envconfig"
 )
 
 var ufoAddress string
 var ufoRow string
 
-//Logging : sets up info and error logging
-func Logging(infoLogger io.Writer, errorLogger io.Writer) {
-	infoLog = log.New(infoLogger, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-	errorLog = log.New(errorLogger, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
-}
-
-//keptnHandler : receives keptn events via http and sets UFO LEDs based on payload
-func keptnHandler(w http.ResponseWriter, r *http.Request) {
-	decoder := json.NewDecoder(r.Body)
-	var event keptnEvent
-	err := decoder.Decode(&event)
-	if err != nil {
-		fmt.Println("Error while parsing JSON payload: " + err.Error())
-		return
-	}
-
-	if event.Data.Stage == "dev" {
-		ufoRow = "top"
-	} else if event.Data.Stage == "staging" {
-		ufoRow = "top"
-	} else if event.Data.Stage == "production" {
-		ufoRow = "bottom"
-	}
-
-	if event.Type == "sh.keptn.events.new-artifact" {
-		ufoColor := "0000ff"
-		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
-	} else if event.Type == "sh.keptn.events.deployment-finished" {
-		ufoColor := "800080"
-		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
-	} else if event.Type == "sh.keptn.events.tests-finished" {
-		ufoColor := "00ff00"
-		infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-		sendUFORequest(ufoAddress, ufoRow, ufoColor, true, false)
-	} else if event.Type == "sh.keptn.events.evaluation-done" {
-		if event.Data.EvaluationPassed {
+// ufoReceiver receives keptn events via http and sets UFO LEDs based on payload
+func ufoReceiver(data interface{}) error {
+	switch data.(type) {
+	case *keptnevents.EvaluationDoneEvent:
+		var event = data.(*keptnevents.EvaluationDoneEvent)
+		if event.Stage == "dev" {
+			ufoRow = "top"
+		} else if event.Stage == "staging" {
+			ufoRow = "top"
+		} else if event.Stage == "production" {
+			ufoRow = "bottom"
+		}
+		if event.Evaluationpassed {
 			ufoColor := "00ff00"
-			infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
+			log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 			sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
 		} else {
 			ufoColor := "ff0000"
-			infoLog.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
+			log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
 			sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
 		}
+	case *keptnevents.NewArtifactEvent:
+		var event = data.(*keptnevents.NewArtifactEvent)
+		if event.Stage == "dev" {
+			ufoRow = "top"
+		} else if event.Stage == "staging" {
+			ufoRow = "top"
+		} else if event.Stage == "production" {
+			ufoRow = "bottom"
+		}
+		ufoColor := "0000ff"
+		log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
+		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
+	case *keptnevents.DeploymentFinishedEvent:
+		var event = data.(*keptnevents.DeploymentFinishedEvent)
+		if event.Stage == "dev" {
+			ufoRow = "top"
+		} else if event.Stage == "staging" {
+			ufoRow = "top"
+		} else if event.Stage == "production" {
+			ufoRow = "bottom"
+		}
+		ufoColor := "800080"
+		log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
+		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
+	case *keptnevents.TestsFinishedEvent:
+		var event = data.(*keptnevents.TestsFinishedEvent)
+		if event.Stage == "dev" {
+			ufoRow = "top"
+		} else if event.Stage == "staging" {
+			ufoRow = "top"
+		} else if event.Stage == "production" {
+			ufoRow = "bottom"
+		}
+		ufoColor := "00ff00"
+		log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
+		sendUFORequest(ufoAddress, ufoRow, ufoColor, true, false)
+	default:
+		log.Println("Other event")
 	}
+
+	return nil
 }
 
-// sendUFORequest : creates and issues necessary GET requests to set UFO LEDs
 func sendUFORequest(ufoAddress string, ufoRow string, ufoColor string, morph bool, whirl bool) {
 	url := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor
 	urlmorph := "http://" + ufoAddress + "/api?" + ufoRow + "_init&" + ufoRow + "=0|15|" + ufoColor + "&" + ufoRow + "_morph=30|10"
@@ -95,7 +83,7 @@ func sendUFORequest(ufoAddress string, ufoRow string, ufoColor string, morph boo
 	var preparedurl string
 	if morph {
 		if whirl {
-			errorLog.Println("UFO does not support both morphing and whirling at the same time")
+			log.Println("UFO does not support both morphing and whirling at the same time")
 			return
 		}
 		preparedurl = urlmorph
@@ -109,42 +97,26 @@ func sendUFORequest(ufoAddress string, ufoRow string, ufoColor string, morph boo
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		errorLog.Println("Error while sending request to UFO: " + err.Error())
+		log.Println("Error while sending request to UFO: " + err.Error())
 		return
 	}
 	defer resp.Body.Close()
-	infoLog.Println("Response Status:" + resp.Status)
-}
-
-// ufoInit : upon service start initializes UFO
-func ufoInit(ufoAddress string) {
-	initURL := "http://" + ufoAddress + "/api?top_init&bottom_init"
-	infoLog.Println("Trying to initialize UFO at " + ufoAddress)
-	resp, err := http.Get(initURL)
-	if err != nil {
-		errorLog.Println("Error while sending request to UFO: " + err.Error())
-		return
-	}
-	defer resp.Body.Close()
-	infoLog.Println("Response Status:" + resp.Status)
+	log.Println("Response Status:" + resp.Status)
 }
 
 func main() {
-	Logging(os.Stdout, os.Stderr)
 	ufoAddress = os.Getenv("UFO_ADDRESS")
 	if ufoAddress == "" {
-		errorLog.Println("No UFO address defined")
-		return
-	}
-	//ufoInit(ufoAddress)
-
-	http.HandleFunc("/", keptnHandler)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+		log.Println("No UFO address defined")
+		os.Exit(1)
 	}
 
-	log.Print("UFO service started.")
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	var rcv keptnevents.RcvConfig
+	if err := envconfig.Process("", &rcv); err != nil {
+		log.Printf("[ERROR] Failed to process listener var: %s", err)
+		os.Exit(1)
+	}
+
+	keptnevents.KeptnReceiver(rcv, ufoReceiver)
+
 }
