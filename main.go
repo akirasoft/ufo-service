@@ -10,65 +10,54 @@ import (
 )
 
 var ufoAddress string
+
 var ufoRow string
+
+func setUfoRow(stage string) string {
+	if stage == "dev" {
+		ufoRow = "top"
+	} else if stage == "staging" {
+		ufoRow = "top"
+	} else if stage == "production" {
+		ufoRow = "bottom"
+	}
+	return ufoRow
+}
 
 // ufoReceiver receives keptn events via http and sets UFO LEDs based on payload
 func ufoReceiver(data interface{}) error {
 	switch data.(type) {
 	case *keptnevents.EvaluationDoneEvent:
 		var event = data.(*keptnevents.EvaluationDoneEvent)
-		if event.Stage == "dev" {
-			ufoRow = "top"
-		} else if event.Stage == "staging" {
-			ufoRow = "top"
-		} else if event.Stage == "production" {
-			ufoRow = "bottom"
-		}
+		ufoRow := setUfoRow(event.Stage)
+		log.Println("UfoRow will be:", ufoRow)
 		if event.Evaluationpassed {
 			ufoColor := "00ff00"
 			log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-			sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
+			go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
 		} else {
 			ufoColor := "ff0000"
 			log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-			sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
+			go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false)
 		}
 	case *keptnevents.NewArtifactEvent:
 		var event = data.(*keptnevents.NewArtifactEvent)
-		if event.Stage == "dev" {
-			ufoRow = "top"
-		} else if event.Stage == "staging" {
-			ufoRow = "top"
-		} else if event.Stage == "production" {
-			ufoRow = "bottom"
-		}
+		ufoRow := setUfoRow(event.Stage)
 		ufoColor := "0000ff"
 		log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
+		go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
 	case *keptnevents.DeploymentFinishedEvent:
 		var event = data.(*keptnevents.DeploymentFinishedEvent)
-		if event.Stage == "dev" {
-			ufoRow = "top"
-		} else if event.Stage == "staging" {
-			ufoRow = "top"
-		} else if event.Stage == "production" {
-			ufoRow = "bottom"
-		}
+		ufoRow := setUfoRow(event.Stage)
 		ufoColor := "800080"
 		log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-		sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
+		go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true)
 	case *keptnevents.TestsFinishedEvent:
 		var event = data.(*keptnevents.TestsFinishedEvent)
-		if event.Stage == "dev" {
-			ufoRow = "top"
-		} else if event.Stage == "staging" {
-			ufoRow = "top"
-		} else if event.Stage == "production" {
-			ufoRow = "bottom"
-		}
+		ufoRow := setUfoRow(event.Stage)
 		ufoColor := "00ff00"
 		log.Println("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor)
-		sendUFORequest(ufoAddress, ufoRow, ufoColor, true, false)
+		go sendUFORequest(ufoAddress, ufoRow, ufoColor, true, false)
 	default:
 		log.Println("Other event")
 	}

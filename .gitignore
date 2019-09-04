@@ -12,4 +12,6 @@
 *.out
 .vscode/*
 vendor/*
+.vendor*/*
 .DS_Store
+Gopkg.lock
