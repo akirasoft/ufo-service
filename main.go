@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	keptnevents "github.com/akirasoft/go-utils/pkg/events"
 	keptnutils "github.com/akirasoft/go-utils/pkg/utils"
@@ -92,7 +93,9 @@ func sendUFORequest(ufoAddress string, ufoRow string, ufoColor string, morph boo
 	}
 	req, err := http.NewRequest("GET", preparedurl, nil)
 	req.Header.Set("Content-Type", "application/json")
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: time.Second * 10,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		logger.Error("Error while sending request to UFO: " + err.Error())
