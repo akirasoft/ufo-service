@@ -38,8 +38,8 @@ func setUfoRow(stage string) string {
 func ufoReceiver(data interface{}, shkeptncontext string, eventID string) error {
 	logger := keptnutils.NewLogger(shkeptncontext, eventID, "ufo-service")
 	switch data.(type) {
-	case *keptnevents.EvaluationDoneEvent:
-		var event = data.(*keptnevents.EvaluationDoneEvent)
+	case *keptnevents.EvaluationDoneEventData:
+		var event = data.(*keptnevents.EvaluationDoneEventData)
 		ufoRow := setUfoRow(event.Stage)
 		if event.Evaluationpassed {
 			ufoColor := "00ff00"
@@ -56,14 +56,14 @@ func ufoReceiver(data interface{}, shkeptncontext string, eventID string) error 
 		ufoColor := "0000ff"
 		logger.Info(fmt.Sprintln("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor))
 		go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true, logger)
-	case *keptnevents.DeploymentFinishedEvent:
-		var event = data.(*keptnevents.DeploymentFinishedEvent)
+	case *keptnevents.DeploymentFinishedEventData:
+		var event = data.(*keptnevents.DeploymentFinishedEventData)
 		ufoRow := setUfoRow(event.Stage)
 		ufoColor := "800080"
 		logger.Info(fmt.Sprintln("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor))
 		go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, true, logger)
-	case *keptnevents.TestsFinishedEvent:
-		var event = data.(*keptnevents.TestsFinishedEvent)
+	case *keptnevents.TestsFinishedEventData:
+		var event = data.(*keptnevents.TestsFinishedEventData)
 		ufoRow := setUfoRow(event.Stage)
 		ufoColor := "00ff00"
 		logger.Info(fmt.Sprintln("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor))
