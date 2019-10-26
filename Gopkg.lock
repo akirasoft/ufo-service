@@ -41,12 +41,15 @@
   revision = "de5bf2ad457846296e2031421a34e2568e304e35"
 
 [[projects]]
-  branch = "master"
-  digest = "1:3d19f471d781c0e046dac0c9c7eb1061e3fd32c366c7b8b09aef3f1a5a098ca4"
-  name = "github.com/akirasoft/keptn-events"
-  packages = ["."]
+  branch = "0.5.0"
+  digest = "1:f672491a92f611f02a8e098d4fc2283a4e1ff25f503fe6e06ba473bf6873d680"
+  name = "github.com/akirasoft/go-utils"
+  packages = [
+    "pkg/events",
+    "pkg/utils",
+  ]
   pruneopts = "UT"
-  revision = "65b344d5c88f8d41936764b54c991a5ab46e9559"
+  revision = "09f382f6431753b8fac44bc3dfac27946e751cfc"
 
 [[projects]]
   digest = "1:320e7ead93de9fd2b0e59b50fd92a4d50c1f8ab455d96bc2eb083267453a9709"
@@ -310,12 +313,9 @@
 
 [[projects]]
   branch = "develop"
-  digest = "1:868c3b979ebdbae3cb816e418345896fd323b2be998b12a3654bbf60c7073304"
+  digest = "1:5b812c492f66321dfe8e655ed54ce2c24da9f5d306ca39bb64b857ae08c127d4"
   name = "github.com/keptn/go-utils"
-  packages = [
-    "pkg/models",
-    "pkg/utils",
-  ]
+  packages = ["pkg/models"]
   pruneopts = "UT"
   revision = "6c78af3a9ac46aa5f12649cf701ef187c3a480f6"
 
@@ -877,7 +877,8 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/akirasoft/keptn-events",
+    "github.com/akirasoft/go-utils/pkg/events",
+    "github.com/akirasoft/go-utils/pkg/utils",
     "github.com/kelseyhightower/envconfig",
   ]
   solver-name = "gps-cdcl"

@@ -50,8 +50,8 @@ func ufoReceiver(data interface{}, shkeptncontext string, eventID string) error 
 			logger.Info(fmt.Sprintln("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor))
 			go sendUFORequest(ufoAddress, ufoRow, ufoColor, false, false, logger)
 		}
-	case *keptnevents.NewArtifactEvent:
-		var event = data.(*keptnevents.NewArtifactEvent)
+	case *keptnevents.ConfigurationChanged:
+		var event = data.(*keptnevents.ConfigurationChanged)
 		ufoRow := setUfoRow(event.Stage)
 		ufoColor := "0000ff"
 		logger.Info(fmt.Sprintln("Trying to talk to UFO at " + ufoAddress + " setting " + ufoRow + " to " + ufoColor))

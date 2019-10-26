@@ -30,8 +30,8 @@
   version = "1.4.0"
 
 [[override]]
-  name = "github.com/keptn/go-utils"
-  branch = "develop"
+  name = "github.com/akirasoft/go-utils"
+  branch = "0.5.0"  
 
 [prune]
   go-tests = true
